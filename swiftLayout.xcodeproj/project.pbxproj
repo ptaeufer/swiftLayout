@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		D00CDB1021246323009A7FC0 /* resources.sh in Resources */ = {isa = PBXBuildFile; fileRef = D00CDB0E21246323009A7FC0 /* resources.sh */; };
-		D00CDB1121246323009A7FC0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00CDB0F21246323009A7FC0 /* Extensions.swift */; };
+		D00CDB1421246949009A7FC0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00CDB1321246949009A7FC0 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D00CDB0E21246323009A7FC0 /* resources.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = resources.sh; sourceTree = "<group>"; };
-		D00CDB0F21246323009A7FC0 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		D00CDB1221246948009A7FC0 /* swiftLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = swiftLayout.h; sourceTree = "<group>"; };
+		D00CDB1321246949009A7FC0 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D04FF1D920EF9857002ED99C /* swiftLayout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = swiftLayout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -31,8 +32,9 @@
 		D00CDB0D21246323009A7FC0 /* swiftLayout */ = {
 			isa = PBXGroup;
 			children = (
+				D00CDB1321246949009A7FC0 /* Extensions.swift */,
 				D00CDB0E21246323009A7FC0 /* resources.sh */,
-				D00CDB0F21246323009A7FC0 /* Extensions.swift */,
+				D00CDB1221246948009A7FC0 /* swiftLayout.h */,
 			);
 			path = swiftLayout;
 			sourceTree = "<group>";
@@ -141,7 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D00CDB1121246323009A7FC0 /* Extensions.swift in Sources */,
+				D00CDB1421246949009A7FC0 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +277,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = p.taeufer.layout;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "swiftLayout/swiftLayout-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -294,6 +297,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = p.taeufer.layout;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "swiftLayout/swiftLayout-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
