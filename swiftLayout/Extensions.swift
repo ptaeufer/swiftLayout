@@ -1,0 +1,533 @@
+import UIKit
+
+public protocol Configuration {}
+
+extension Configuration {
+    public func make(_ block: (Self) -> Void) -> Self {
+        block(self)
+        return self
+    }
+    
+}
+
+extension UIView : Configuration {
+    
+    @discardableResult
+    func id(_ id :R.id) -> Self {
+        self.tag = id.rawValue.hash
+        return self
+    }
+
+    @discardableResult
+    func backgroundColor(_ color :UIColor) -> Self {
+        self.backgroundColor = color
+        return self
+    }
+    
+    @discardableResult
+    func backgroundColor(_ color :R.color) -> Self {
+        self.backgroundColor(color.color)
+        return self
+    }
+    
+    @discardableResult
+    func children(_ children : [AnyObject]) -> Self {
+        children.forEach {
+            if let v = $0 as? UIView {
+                self.addSubview(v)
+            }
+        }
+        return self
+    }
+    
+    @discardableResult
+    func style(_ style : R.style) -> Self {
+    
+        for (key,val) in (style.get() as [String:Any]) {
+            var _val = val
+            if let v = _val as? R.color { _val = v.color}
+            if let v = _val as? R.string { _val = v.string}
+            if let v = _val as? R.image { _val = v.image}
+            self.setValue(val, forKey: key)
+        }
+        return self
+    }
+    
+    
+    @discardableResult func leading(_ val : CGFloat, to : R.id? = nil) -> Self {
+        self._constraints.append(Constraint((.leading, .equal, to?.rawValue, val)))
+        return self
+    }
+    
+    @discardableResult func trailing(_ val : CGFloat, to : R.id? = nil) -> Self {
+        self._constraints.append(Constraint((.trailing, .equal, to?.rawValue, val)))
+        return self
+    }
+    
+    
+    @discardableResult func bottom(_ val : CGFloat, to : R.id? = nil) -> Self {
+        self._constraints.append(Constraint((.bottom, .equal, to?.rawValue, val)))
+        return self
+    }
+    
+    @discardableResult func top(_ val : CGFloat, to : R.id? = nil) -> Self {
+        self._constraints.append(Constraint((.top, .equal, to?.rawValue, val)))
+        return self
+    }
+    
+    @discardableResult func width(_ val : CGFloat, to : R.id? = nil) -> Self {
+        self._constraints.append(Constraint((.width, .equal, to?.rawValue, val)))
+        return self
+    }
+    
+    @discardableResult func height(_ val : CGFloat, to : R.id? = nil) -> Self {
+        self._constraints.append(Constraint((.height, .equal, to?.rawValue, val)))
+        return self
+    }
+    
+    @discardableResult func centerX(_ val : CGFloat, to : R.id? = nil) -> Self {
+        self._constraints.append(Constraint((.centerX, .equal, to?.rawValue, val)))
+        return self
+    }
+    
+    @discardableResult func centerY(_ val : CGFloat, to : R.id? = nil) -> Self {
+        self._constraints.append(Constraint((.centerY, .equal, to?.rawValue, val)))
+        return self
+    }
+    
+}
+
+extension UIImageView {
+    @discardableResult func image(_ image : UIImage) -> UIImageView {
+        self.image = image
+        return self
+    }
+}
+
+extension UILabel {
+    
+ 
+    @discardableResult func text(_ text : String) -> UILabel {
+        self.text = text
+        return self
+    }
+    @discardableResult func textAlignment(_ alignment : NSTextAlignment) -> UILabel {
+        self.textAlignment = alignment
+        return self
+    }
+    
+    @discardableResult func textColor(_ color : R.color) -> UILabel {
+        self.textColor = color.color
+        return self
+    }
+}
+
+extension UITableView {
+    
+    private struct AssociatedKeys {
+        static var adapter = "adapter"
+    }
+    
+    var adapter : Adapter? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.adapter) as? Adapter
+        }
+        
+        set(value) {
+            objc_setAssociatedObject(self,&AssociatedKeys.adapter,value,objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    @discardableResult func adapter(_ adapter : Adapter) -> UITableView {
+        self.rowHeight = UITableViewAutomaticDimension
+        self.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        self.dataSource = adapter
+        self.adapter = adapter
+        return self
+    }
+
+    
+}
+
+extension UIView {
+    
+    private struct AssociatedKeys {
+        static var constraints = "constraints"
+    }
+    
+    private var _constraints : [Constraint] {
+        get {
+            guard let c = objc_getAssociatedObject(self, &AssociatedKeys.constraints) as? [Constraint] else {
+                self._constraints = [Constraint]()
+                return self._constraints
+            }
+            return c
+        }
+        
+        set(value) {
+            objc_setAssociatedObject(self,&AssociatedKeys.constraints,value,objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    func getView<T:UIView>(_ id : R.id) -> T? {
+        return self.viewWithTag(id.rawValue.hash) as? T
+    }
+    
+    func inflate(_ layout : Layout) {
+        self.inflate(layout.layout())
+    }
+    
+    func inflate<T>(_ layout : Layout, _ obj : T) {
+        self.inflate(layout.layout(Binding(obj)))
+    }
+    
+    private func inflate(_ views : [AnyObject]) {
+        self.removeAllSubviews()
+        views.forEach {
+            if let v = $0 as? UIView {
+                self.addSubview(v)
+            }
+        }
+        
+        func applyConstraints(_ v : UIView) {
+            v.translatesAutoresizingMaskIntoConstraints = false
+            v.subviews.forEach { applyConstraints($0) }
+            v.refreshConstraints()
+        }
+        
+        self.subviews.forEach { applyConstraints($0) }
+    }
+    
+    func removeAllSubviews() {
+        for _v in self.subviews {
+            _v.removeFromSuperview()
+        }
+    }
+    
+    func refreshConstraints() {
+        self._constraints.forEach {
+            $0.apply(view: self)
+        }
+    }
+
+}
+
+extension UIViewController{
+    
+    func getView<T:UIView>(_ id : R.id) -> T? {
+        return view.getView(id) as? T
+    }
+    
+    func inflate(_ layout : Layout) {
+        self.view.inflate(layout)
+    }
+    
+    func inflate<T>(_ layout : Layout, _ obj : T) {
+        self.view.inflate(layout, obj)
+    }
+}
+
+
+extension R.string {
+    func string(_ args: CVarArg...) -> String {
+        
+        if args.count == 0 {
+            return NSLocalizedString("\(self.rawValue)", comment: "")
+        } else {
+            return String(format: NSLocalizedString("\(self.rawValue)", comment: ""), arguments: args)
+        }
+    }
+    
+    func quantityString(args: CVarArg...) -> String {
+        if let amount = args[0] as? NSNumber{
+            if amount.intValue > 1 {
+                return String(format: NSLocalizedString("\(self.rawValue).other", comment: ""), amount.intValue)
+            } else {
+                return String(format: NSLocalizedString("\(self.rawValue).one", comment: ""),  amount.intValue)
+            }
+        } else {
+            return ""
+        }
+    }
+}
+
+extension R.font {
+    var font : UIFont {
+        if let font = UIFont(name: self.get(), size: UIFont.systemFontSize) {
+            return font
+        }
+        return UIFont.systemFont(ofSize: UIFont.systemFontSize, weight: UIFont.Weight.light)
+    }
+    
+    func size(_ size : CGFloat) -> UIFont{
+        if let font = UIFont(name: self.get(), size: size) {
+            return font
+        }
+        return UIFont.systemFont(ofSize: size, weight: UIFont.Weight.light)
+    }
+    
+}
+
+extension R.color {
+    var color : UIColor {
+        if let color : String = self.get() {
+            return UIColor(hex: color)
+        }
+        return UIColor(hex: self.rawValue)
+    }
+}
+
+extension R.image {
+    var image : UIImage {
+        return UIImage(named: self.rawValue)!
+    }
+}
+
+extension R.style {
+    var style : [String:Any] {
+        return ResourcePool.style.value(forKey: self.rawValue) as? [String:Any] ?? [:]
+    }
+    
+    func extend(_ ext : [String:Any]) -> [String:Any] {
+        var _e : [String:Any] = self.get()
+        return _e.extend(ext)
+    }
+    
+}
+
+extension UIColor {
+    convenience init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int = UInt32()
+        Scanner(string: hex).scanHexInt32(&int)
+        let a, r, g, b: UInt32
+        switch hex.characters.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 0, 0, 0)
+        }
+        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
+    }
+    
+}
+
+class Constraint : NSObject {
+    private var toView : UIView?
+    private var to : String?
+    private var offset : CGFloat
+    private var attribute : NSLayoutAttribute
+    private var relation : NSLayoutRelation
+    private var otherAttribute : NSLayoutAttribute?
+    
+    private var _view : UIView?
+    private var _constraint : NSLayoutConstraint?
+    private var _tryCount = 0
+    
+    init(_ params : (NSLayoutAttribute, NSLayoutRelation, String?, CGFloat?)) {
+        self.attribute = params.0
+        self.relation = params.1
+        self.to = params.2
+        self.offset = params.3 ?? 0
+    }
+    
+    init(_ params : (NSLayoutAttribute, NSLayoutRelation, String?, NSLayoutAttribute, CGFloat)) {
+        self.attribute = params.0
+        self.relation = params.1
+        self.to = params.2
+        self.otherAttribute = params.3
+        self.offset = params.4
+    }
+    
+    
+    init(_ params : (NSLayoutAttribute, NSLayoutRelation, UIView, CGFloat)) {
+        self.attribute = params.0
+        self.relation = params.1
+        self.toView = params.2
+        self.offset = params.3
+    }
+    
+    init(_ constraint : NSLayoutConstraint) {
+        self._constraint = constraint
+        self.offset = constraint.constant
+        self.attribute = constraint.firstAttribute
+        self.otherAttribute = constraint.secondAttribute
+        self.relation = constraint.relation
+        self._view = constraint.firstItem as? UIView
+    }
+    
+    
+    func remove() {
+        if let c = _constraint {
+            NSLayoutConstraint.deactivate([c])
+        }
+    }
+    
+    func update(_ newValue : CGFloat, _ duration : Double? = nil, completion : ((Bool)->Void)? = nil) {
+        self.offset = newValue
+        if self._view != nil {
+            self.apply(view: _view!)
+        }
+        
+        if let duration = duration {
+            var _v : UIView?
+            var next : AnyObject? = self._view
+            while next?.next != nil {
+                next = next?.next
+                if let responder = next as? UIViewController {
+                    _v = responder.view
+                    break;
+                }
+            }
+            
+            UIView.animate(withDuration: duration, animations: {
+                (_v ?? self._view?.superview)?.layoutIfNeeded()
+            }, completion: completion)
+        } else {
+            self._view?.superview?.layoutIfNeeded()
+        }
+    }
+    
+    var value : CGFloat {
+        return self.offset
+    }
+    
+    
+    func apply(view : UIView) {
+        self._tryCount += 1
+        self.remove()
+        
+        self._view = view
+        
+        var toView : UIView? = attribute != .height && attribute != .width ? view.superview : nil
+        var attr = attribute
+        
+        if let tv = self.toView {
+            toView = tv
+            attr = getAttribute(attr)
+        }
+        
+        if let id = self.to {
+            
+            func relateToOther(_ view : UIView?) -> Bool {
+                if let toItem = view?.viewWithTag(id.hash) {
+                    self._tryCount = 0
+                    toView = toItem
+                    attr = getAttribute(attr)
+                    return true
+                } else {
+                    return false
+                }
+            }
+            
+            var sv = view.superview
+            while !relateToOther(sv) && sv != nil {
+                sv = sv?.superview
+            }
+            if sv == nil {
+                fatalError("no view with given id found")
+            }
+            
+        }
+        
+        if toView == view.superview && (attribute == .bottom || attribute == .trailing) {
+            self.offset = -self.offset
+        }
+        if self.offset > 0 && self.offset < 1 {
+            _constraint = NSLayoutConstraint(item: view, attribute: attribute, relatedBy: relation, toItem: toView ?? view.superview, attribute: toView ?? view.superview != nil ? attr : .notAnAttribute, multiplier: self.offset, constant: 0)
+        } else {
+            _constraint = NSLayoutConstraint(item: view, attribute: attribute, relatedBy: relation, toItem: toView, attribute: toView != nil ? attr : .notAnAttribute, multiplier: 1, constant: self.offset)
+        }
+        
+        NSLayoutConstraint.activate([_constraint!])
+        
+    }
+    
+    private func getAttribute(_ attr : NSLayoutAttribute) -> NSLayoutAttribute {
+        
+        if let a = self.otherAttribute {
+            return a
+        }
+        
+        switch attr {
+        case .bottom:
+            return .top
+        case .top:
+            return .bottom
+        case .leading:
+            return .trailing
+        case .trailing:
+            return .leading
+        default:
+            return attr
+        }
+    }
+    
+    func attr() -> NSLayoutAttribute {
+        return self.attribute
+    }
+}
+
+class Adapter: NSObject, UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return 0 }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        return cell
+    }
+}
+
+class ListAdapter<D> : Adapter  {
+    
+    private var data : [D] = []
+    private let layout : Layout
+
+    init(_ data : [D], _ layout : Layout) {
+        self.data = data
+        self.layout = layout
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        cell.contentView.inflate(layout, data[indexPath.row])
+        cell.contentView.backgroundColor = UIColor.clear
+        cell.backgroundColor = UIColor.clear
+        return cell
+    }
+    
+}
+
+
+protocol Bindable {
+    associatedtype TYPE
+    var object : TYPE {get}
+    init(_ obj : TYPE)
+}
+
+class Binding<S> : Bindable {
+    let object : S
+    required init(_ obj: S) {
+        self.object = obj
+    }
+}
+
+
+class Layout {
+    func layout() -> [AnyObject] {
+        return []
+    }
+    func layout<T:Bindable>(_ binding : T) -> [AnyObject] {
+        return []
+    }
+}
+
+
+
