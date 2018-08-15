@@ -87,7 +87,7 @@ write_enum()
 
 cd ..
 R=$(find ${PWD} -name "R.swift" | head -n 1)
-mv $(find ${PWD} -name "swifty_layout_extensions" | head -n 1) $R
+
 if [ ! -z "$R" -a "$R" != " " ]; then
 
     if [ -z "$(cat $R)" ]
@@ -278,7 +278,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     echo "extension Dictionary where Iterator.Element == (key: String, value: Any) { mutating func extend(_ ext : [String:Any]) -> Dictionary<String,Any> { self.merge(ext) { (_, new) in new }; return self; } }" >> $R
     echo "class RawResource : NSObject {typealias Style = [String:Any]; }; @objcMembers class Resource : NSObject { typealias Style = [String:Any]; override init() {}}" >> $R
 
-
+    echo $(cat $(find ${PWD} -name "swifty_layout_extensions" | head -n 1)) >> $R
 fi
 
 
