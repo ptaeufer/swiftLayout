@@ -95,7 +95,7 @@ Pod::Spec.new do |s|
   #
   s.swift_version = "4.0"
 
-  s.source_files = "swiftLayout", "swiftLayout/*.{h,swift,sh}"
+  s.source_files = "swiftLayout", "swiftLayout/*"
   s.exclude_files = "Classes/Exclude"
 
   # s.public_header_files = "Classes/**/*.h"

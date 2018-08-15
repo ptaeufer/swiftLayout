@@ -279,7 +279,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     echo "extension Dictionary where Iterator.Element == (key: String, value: Any) { mutating func extend(_ ext : [String:Any]) -> Dictionary<String,Any> { self.merge(ext) { (_, new) in new }; return self; } }" >> $R
     echo "class RawResource : NSObject {typealias Style = [String:Any]; }; @objcMembers class Resource : NSObject { typealias Style = [String:Any]; override init() {}}" >> $R
 
-    echo $(cat $(find ${basePath}/*/res -name "R.swift" | head -n 1)) >> $R
+    echo $(cat $(find ${basePath}/*/swiftLayout -name "Extensions" | head -n 1)) >> $R
 
 fi
 
