@@ -41,7 +41,7 @@ init_res() {
     echo "import Foundation" >> $fonts
     echo "class Font : Resource {" >> $fonts
     echo "" >> $fonts
-    echo "  lazy var api = \"https://www.myApi.com/post/%d\""; >> $fonts
+    echo "  lazy var primary = \"RoboSans\""; >> $fonts
     echo "}" >> $fonts
 
 }
@@ -85,10 +85,9 @@ write_enum()
 #echo "}" >> $R
 }
 
-
-basePath="${SRCROOT}"
-R=$(find ${basePath}/*/res -name "R.swift" | head -n 1)
-
+cd ..
+R=$(find ${PWD} -name "R.swift" | head -n 1)
+mv $(find ${PWD} -name "swifty_layout_extensions" | head -n 1) $R
 if [ ! -z "$R" -a "$R" != " " ]; then
 
     if [ -z "$(cat $R)" ]
@@ -100,7 +99,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     echo "import Foundation" >> $tmpfile
     echo "" >> $tmpfile
     echo "class R{" >> $tmpfile
-    for file in $(find ${basePath} -name "*.swift"); do
+    for file in $(find ${PWD} -name "*.swift"); do
     for name in $(cat $file | grep "class" | sed -n 's/.*class *\(.*\) *: *RawResource.*/\1/p' | sort -u); do
     echo "    static let $(echo "$name" | awk '{print tolower($0)}') = $name();" >> $tmpfile
     done
@@ -114,7 +113,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     echo "" >> $tmpfile
     echo "@objcMembers" >> $tmpfile
     echo "class ResourcePool : NSObject{" >> $tmpfile
-    for file in $(find ${basePath} -name "*.swift"); do
+    for file in $(find ${PWD} -name "*.swift"); do
     for name in $(cat $file | grep "class" | sed -n 's/.*class *\(.*\) *: *Resource.*/\1/p' | sort -u); do
     echo "    static let $(echo "$name" | awk '{print tolower($0)}') = $name();" >> $tmpfile
     echo "" >> $R
@@ -157,7 +156,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     contents=""
     echo "" >> $R
     echo "    enum layout {" >> $R
-    for file in $(find ${basePath}/ -name "*.swift"); do
+    for file in $(find ${PWD}/ -name "*.swift"); do
     for name in $(cat $file | grep "class"| sed -n 's/.*class *\(.*\) *: *Layout .*/\1/p' | sort -u); do
     echo "        static let $(echo "$name")_internal = $name();" >> $tmpfile
     echo "        static let $(echo "$name") = ResourcePool.$(echo "$name")_internal;" >> $R
@@ -176,7 +175,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     # find ids
     START_TIME="$(date +%s)"
     contents=""
-    for file in $(find ${basePath} -name "*.swift"); do
+    for file in $(find ${PWD} -name "*.swift"); do
     for name in $(cat $file | grep "R\.id\."| sed 's/.*R\.id\.\([a-zA-Z0-9_\-]*\).*/\1/' | sort -u); do
     contents=$contents" $name"
     done
@@ -190,7 +189,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     # find events
     START_TIME="$(date +%s)"
     contents=""
-    for file in $(find ${basePath} -name "*.swift"); do
+    for file in $(find ${PWD} -name "*.swift"); do
     for name in $(cat $file | grep "R\.event\." | grep -v "func" | grep -v "R\.event\.[a-zA-Z0-9_\-]*\."| sed 's/.*R\.event\.\([a-zA-Z0-9_\-]*\).* as \([a-zA-Z0-9_\-]*\).*/\1\(\2)/' | sed 's/.*R\.event\.\([a-zA-Z0-9_\-]*\).*/\1/'); do
     contents=$contents" $name"
     done
@@ -249,7 +248,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
 
     # find assets
     START_TIME="$(date +%s)"
-    contents=$(find ${basePath} -type d -name "*.imageset" | sed 's!.*/!!' | sed 's/\.[^.]*$//')
+    contents=$(find ${PWD} -type d -name "*.imageset" | sed 's!.*/!!' | sed 's/\.[^.]*$//')
     write_enum "image" $contents
 
     FINISH_TIME="$(date +%s)"
@@ -259,7 +258,7 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     # find strings
     START_TIME="$(date +%s)"
     contents=""
-    for file in $(find ${basePath} -name "*.strings"); do
+    for file in $(find ${PWD} -name "*.strings"); do
     for name in $(cat $file | sed -n 's/ *\([a-zA-Z0-9_\-]*\) *=.*/\1/p' | sed -e 's/\.one//g' | sed -e 's/\.other//g'); do
     contents=$contents" $name"
     done
@@ -279,7 +278,6 @@ if [ ! -z "$R" -a "$R" != " " ]; then
     echo "extension Dictionary where Iterator.Element == (key: String, value: Any) { mutating func extend(_ ext : [String:Any]) -> Dictionary<String,Any> { self.merge(ext) { (_, new) in new }; return self; } }" >> $R
     echo "class RawResource : NSObject {typealias Style = [String:Any]; }; @objcMembers class Resource : NSObject { typealias Style = [String:Any]; override init() {}}" >> $R
 
-    echo $(cat $(find ${basePath}/*/swiftLayout -name "Extensions" | head -n 1)) >> $R
 
 fi
 
