@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  s.name         = "swiftLayout"
+  s.name         = "swiftyLayout"
   s.version      = "0.0.2"
   s.summary      = "code based layouts"
 
@@ -95,7 +95,7 @@ Pod::Spec.new do |s|
   #
   s.swift_version = "4.0"
 
-  s.source_files = "swiftLayout", "swiftLayout/*"
+  s.source_files = "swiftLayout/**/*"
   s.exclude_files = "Classes/Exclude"
 
   # s.public_header_files = "Classes/**/*.h"

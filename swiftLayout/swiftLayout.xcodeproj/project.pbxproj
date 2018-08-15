@@ -8,15 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		D00CDB1021246323009A7FC0 /* resources.sh in Resources */ = {isa = PBXBuildFile; fileRef = D00CDB0E21246323009A7FC0 /* resources.sh */; };
-		D00CDB1421246949009A7FC0 /* Extensions in Sources */ = {isa = PBXBuildFile; fileRef = D00CDB1321246949009A7FC0 /* Extensions */; };
+		D00CDB1421246949009A7FC0 /* Extensions.txt in Sources */ = {isa = PBXBuildFile; fileRef = D00CDB1321246949009A7FC0 /* Extensions.txt */; };
 		D00CDB1621246B4C009A7FC0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D00CDB1521246B4C009A7FC0 /* Info.plist */; };
+		D00CDB1821247DD6009A7FC0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00CDB1721247DD6009A7FC0 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D00CDB0E21246323009A7FC0 /* resources.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = resources.sh; sourceTree = "<group>"; };
 		D00CDB1221246948009A7FC0 /* swiftLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = swiftLayout.h; sourceTree = "<group>"; };
-		D00CDB1321246949009A7FC0 /* Extensions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Extensions; sourceTree = "<group>"; };
+		D00CDB1321246949009A7FC0 /* Extensions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Extensions.txt; sourceTree = "<group>"; };
 		D00CDB1521246B4C009A7FC0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D00CDB1721247DD6009A7FC0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D04FF1D920EF9857002ED99C /* swiftLayout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = swiftLayout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -35,9 +37,10 @@
 			isa = PBXGroup;
 			children = (
 				D00CDB1521246B4C009A7FC0 /* Info.plist */,
-				D00CDB1321246949009A7FC0 /* Extensions */,
+				D00CDB1321246949009A7FC0 /* Extensions.txt */,
 				D00CDB0E21246323009A7FC0 /* resources.sh */,
 				D00CDB1221246948009A7FC0 /* swiftLayout.h */,
+				D00CDB1721247DD6009A7FC0 /* Extensions.swift */,
 			);
 			path = swiftLayout;
 			sourceTree = "<group>";
@@ -129,7 +132,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D00CDB1421246949009A7FC0 /* Extensions in Sources */,
+				D00CDB1421246949009A7FC0 /* Extensions.txt in Sources */,
+				D00CDB1821247DD6009A7FC0 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
