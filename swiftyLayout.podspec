@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "swiftyLayout"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "code based layouts"
 
   # This description is used to generate tags and improve search results.
@@ -43,7 +43,7 @@ Pod::Spec.new do |s|
 
   s.script_phase = { 
     :name => 'build dependencies', 
-    :script => 'bash $(find . -name "resources.sh")',
+    :script => 'bash $(find $PWD -name "resources.sh")',
     :execution_position => :before_compile 
     }
 
