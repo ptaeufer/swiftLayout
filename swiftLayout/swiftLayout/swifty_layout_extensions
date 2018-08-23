@@ -38,6 +38,19 @@ extension UIView : Configuration {
         }
         return self
     }
+
+func on(click : R.event) {
+UITapGestureRecognizer(addToView: self, closure: {
+var parentResponder: UIResponder? = self.superview
+while parentResponder != nil {
+parentResponder = parentResponder!.next
+if let listener = parentResponder as? EventListener {
+listener.on(event : click)
+break;
+}
+}
+})
+}
     
     @discardableResult
     func style(_ style : R.style) -> Self {
@@ -501,6 +514,17 @@ class ListAdapter<D> : Adapter  {
         cell.backgroundColor = UIColor.clear
         return cell
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var parentResponder: UIResponder? = tableView
+        while parentResponder != nil {
+            parentResponder = parentResponder!.next
+            if let listener = parentResponder as? EventListener {
+                listener.on(event : R.event.selected(self.data[indexPath.row] as AnyObject))
+                break;
+            }
+        }
+    }
     
 }
 
@@ -528,5 +552,93 @@ class Layout {
     }
 }
 
+protocol EventListener {
+    func on(event : R.event)
+}
 
+class Observable {
+    let _observers = NSPointerArray.weakObjects()
+    func notify(_ event : R.event) {
+        _observers.allObjects.each {  index,o  in
+            guard let pointer = _observers.pointer(at: index), let observer = Unmanaged<AnyObject>.fromOpaque(pointer).takeUnretainedValue() as? EventListener else { return }
+            observer.on(event: event)
+        }
+    }
 
+    func register(_ observer : EventListener) {
+        _observers.addPointer(Unmanaged.passUnretained(observer as AnyObject).toOpaque())
+    }
+}
+
+extension UIGestureRecognizer {
+@discardableResult convenience init(addToView targetView: UIView,
+closure: @escaping () -> Void) {
+self.init()
+
+GestureTarget.add(gesture: self,
+closure: closure,
+toView: targetView)
+}
+}
+
+private class GestureTarget: UIView {
+class ClosureContainer {
+weak var gesture: UIGestureRecognizer?
+let closure: (() -> Void)
+
+init(closure: @escaping () -> Void) {
+self.closure = closure
+}
+}
+
+var containers = [ClosureContainer]()
+
+convenience init() {
+self.init(frame: .zero)
+isHidden = true
+}
+
+static func add(gesture: UIGestureRecognizer, closure: @escaping () -> Void,
+toView targetView: UIView) {
+let target: GestureTarget
+if let existingTarget = existingTarget(inTargetView: targetView) {
+target = existingTarget
+} else {
+target = GestureTarget()
+targetView.addSubview(target)
+}
+let container = ClosureContainer(closure: closure)
+container.gesture = gesture
+target.containers.append(container)
+
+gesture.addTarget(target, action: #selector(GestureTarget.target(gesture:)))
+targetView.addGestureRecognizer(gesture)
+}
+
+static func existingTarget(inTargetView targetView: UIView) -> GestureTarget? {
+for subview in targetView.subviews {
+if let target = subview as? GestureTarget {
+return target
+}
+}
+return nil
+}
+
+func cleanUpContainers() {
+containers = containers.filter({ $0.gesture != nil })
+}
+
+@objc func target(gesture: UIGestureRecognizer) {
+cleanUpContainers()
+
+for container in containers {
+guard let containerGesture = container.gesture else {
+continue
+}
+
+if gesture === containerGesture {
+container.closure()
+}
+}
+}
+}
