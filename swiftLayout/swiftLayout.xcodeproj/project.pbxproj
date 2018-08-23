@@ -9,15 +9,17 @@
 /* Begin PBXBuildFile section */
 		D00CDB1021246323009A7FC0 /* resources.sh in Resources */ = {isa = PBXBuildFile; fileRef = D00CDB0E21246323009A7FC0 /* resources.sh */; };
 		D00CDB1621246B4C009A7FC0 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D00CDB1521246B4C009A7FC0 /* Info.plist */; };
-		D0F8B3A821249B0F00CE7DBC /* swifty_layout_extensions in Resources */ = {isa = PBXBuildFile; fileRef = D0F8B3A721249B0F00CE7DBC /* swifty_layout_extensions */; };
+		D04440D2212EF60D0066AFDE /* swiftyLayout.podspec in Resources */ = {isa = PBXBuildFile; fileRef = D04440D1212EF60D0066AFDE /* swiftyLayout.podspec */; };
+		D04440E0212EFFD20066AFDE /* swifty_layout_extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04440DF212EFFD20066AFDE /* swifty_layout_extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D00CDB0E21246323009A7FC0 /* resources.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = resources.sh; sourceTree = "<group>"; };
 		D00CDB1221246948009A7FC0 /* swiftLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = swiftLayout.h; sourceTree = "<group>"; };
 		D00CDB1521246B4C009A7FC0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D04440D1212EF60D0066AFDE /* swiftyLayout.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = swiftyLayout.podspec; path = ../../swiftyLayout.podspec; sourceTree = "<group>"; };
+		D04440DF212EFFD20066AFDE /* swifty_layout_extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = swifty_layout_extensions.swift; sourceTree = "<group>"; };
 		D04FF1D920EF9857002ED99C /* swiftLayout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = swiftLayout.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D0F8B3A721249B0F00CE7DBC /* swifty_layout_extensions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = swifty_layout_extensions; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,7 +36,8 @@
 		D00CDB0D21246323009A7FC0 /* swiftLayout */ = {
 			isa = PBXGroup;
 			children = (
-				D0F8B3A721249B0F00CE7DBC /* swifty_layout_extensions */,
+				D04440DF212EFFD20066AFDE /* swifty_layout_extensions.swift */,
+				D04440D1212EF60D0066AFDE /* swiftyLayout.podspec */,
 				D00CDB1521246B4C009A7FC0 /* Info.plist */,
 				D00CDB0E21246323009A7FC0 /* resources.sh */,
 				D00CDB1221246948009A7FC0 /* swiftLayout.h */,
@@ -117,8 +120,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D04440D2212EF60D0066AFDE /* swiftyLayout.podspec in Resources */,
 				D00CDB1621246B4C009A7FC0 /* Info.plist in Resources */,
-				D0F8B3A821249B0F00CE7DBC /* swifty_layout_extensions in Resources */,
 				D00CDB1021246323009A7FC0 /* resources.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -130,6 +133,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D04440E0212EFFD20066AFDE /* swifty_layout_extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

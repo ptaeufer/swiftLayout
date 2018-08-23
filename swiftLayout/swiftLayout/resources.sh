@@ -275,10 +275,10 @@ echo "}" >> $R
 echo "}" >> $tmpfile
 
 echo $(cat $tmpfile) >> $R
-echo "extension Dictionary where Iterator.Element == (key: String, value: Any) { mutating func extend(_ ext : [String:Any]) -> Dictionary<String,Any> { self.merge(ext) { (_, new) in new }; return self; } }" >> $R
-echo "class RawResource : NSObject {typealias Style = [String:Any]; }; @objcMembers class Resource : NSObject { typealias Style = [String:Any]; override init() {}}" >> $R
+#echo "extension Dictionary where Iterator.Element == (key: String, value: Any) { mutating func extend(_ ext : [String:Any]) -> Dictionary<String,Any> { self.merge(ext) { (_, new) in new }; return self; } }" >> $R
+#echo "class RawResource : NSObject {typealias Style = [String:Any]; }; @objcMembers class Resource : NSObject { typealias Style = [String:Any]; override init() {}}" >> $R
 
-cat $(find ${PWD} -name "swifty_layout_extensions" | head -n 1) >> $R
+#cat $(find ${PWD} -name "swifty_layout_extensions" | head -n 1) >> $R
 fi
 
 

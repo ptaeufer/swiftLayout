@@ -1,3 +1,4 @@
+import UIKit
 
 public protocol Configuration {}
 
@@ -9,6 +10,7 @@ extension Configuration {
     
 }
 
+
 extension UIView : Configuration {
     
     @discardableResult
@@ -16,7 +18,7 @@ extension UIView : Configuration {
         self.tag = id.rawValue.hash
         return self
     }
-
+    
     @discardableResult
     func backgroundColor(_ color :UIColor) -> Self {
         self.backgroundColor = color
@@ -38,23 +40,23 @@ extension UIView : Configuration {
         }
         return self
     }
-
-func on(click : R.event) {
-UITapGestureRecognizer(addToView: self, closure: {
-var parentResponder: UIResponder? = self.superview
-while parentResponder != nil {
-parentResponder = parentResponder!.next
-if let listener = parentResponder as? EventListener {
-listener.on(event : click)
-break;
-}
-}
-})
-}
+    
+    func on(click : R.event) {
+        UITapGestureRecognizer(addToView: self, closure: {
+            var parentResponder: UIResponder? = self.superview
+            while parentResponder != nil {
+                parentResponder = parentResponder!.next
+                if let listener = parentResponder as? EventListener {
+                    listener.on(event : click)
+                    break;
+                }
+            }
+        })
+    }
     
     @discardableResult
     func style(_ style : R.style) -> Self {
-    
+        
         for (key,val) in (style.get() as [String:Any]) {
             var _val = val
             if let v = _val as? R.color { _val = v.color}
@@ -118,7 +120,7 @@ extension UIImageView {
 
 extension UILabel {
     
- 
+    
     @discardableResult func text(_ text : String) -> UILabel {
         self.text = text
         return self
@@ -157,7 +159,7 @@ extension UITableView {
         self.adapter = adapter
         return self
     }
-
+    
     
 }
 
@@ -221,7 +223,7 @@ extension UIView {
             $0.apply(view: self)
         }
     }
-
+    
 }
 
 extension UIViewController{
@@ -497,7 +499,7 @@ class ListAdapter<D> : Adapter  {
     
     private var data : [D] = []
     private let layout : Layout
-
+    
     init(_ data : [D], _ layout : Layout) {
         self.data = data
         self.layout = layout
@@ -514,7 +516,7 @@ class ListAdapter<D> : Adapter  {
         cell.backgroundColor = UIColor.clear
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var parentResponder: UIResponder? = tableView
         while parentResponder != nil {
@@ -564,81 +566,84 @@ class Observable {
             observer.on(event: event)
         }
     }
-
+    
     func register(_ observer : EventListener) {
         _observers.addPointer(Unmanaged.passUnretained(observer as AnyObject).toOpaque())
     }
 }
 
 extension UIGestureRecognizer {
-@discardableResult convenience init(addToView targetView: UIView,
-closure: @escaping () -> Void) {
-self.init()
-
-GestureTarget.add(gesture: self,
-closure: closure,
-toView: targetView)
-}
+    @discardableResult convenience init(addToView targetView: UIView,
+                                        closure: @escaping () -> Void) {
+        self.init()
+        
+        GestureTarget.add(gesture: self,
+                          closure: closure,
+                          toView: targetView)
+    }
 }
 
 private class GestureTarget: UIView {
-class ClosureContainer {
-weak var gesture: UIGestureRecognizer?
-let closure: (() -> Void)
+    class ClosureContainer {
+        weak var gesture: UIGestureRecognizer?
+        let closure: (() -> Void)
+        
+        init(closure: @escaping () -> Void) {
+            self.closure = closure
+        }
+    }
+    
+    var containers = [ClosureContainer]()
+    
+    convenience init() {
+        self.init(frame: .zero)
+        isHidden = true
+    }
+    
+    static func add(gesture: UIGestureRecognizer, closure: @escaping () -> Void,
+                    toView targetView: UIView) {
+        let target: GestureTarget
+        if let existingTarget = existingTarget(inTargetView: targetView) {
+            target = existingTarget
+        } else {
+            target = GestureTarget()
+            targetView.addSubview(target)
+        }
+        let container = ClosureContainer(closure: closure)
+        container.gesture = gesture
+        target.containers.append(container)
+        
+        gesture.addTarget(target, action: #selector(GestureTarget.target(gesture:)))
+        targetView.addGestureRecognizer(gesture)
+    }
+    
+    static func existingTarget(inTargetView targetView: UIView) -> GestureTarget? {
+        for subview in targetView.subviews {
+            if let target = subview as? GestureTarget {
+                return target
+            }
+        }
+        return nil
+    }
+    
+    func cleanUpContainers() {
+        containers = containers.filter({ $0.gesture != nil })
+    }
+    
+    @objc func target(gesture: UIGestureRecognizer) {
+        cleanUpContainers()
+        
+        for container in containers {
+            guard let containerGesture = container.gesture else {
+                continue
+            }
+            
+            if gesture === containerGesture {
+                container.closure()
+            }
+        }
+    }
+}
 
-init(closure: @escaping () -> Void) {
-self.closure = closure
-}
-}
-
-var containers = [ClosureContainer]()
-
-convenience init() {
-self.init(frame: .zero)
-isHidden = true
-}
-
-static func add(gesture: UIGestureRecognizer, closure: @escaping () -> Void,
-toView targetView: UIView) {
-let target: GestureTarget
-if let existingTarget = existingTarget(inTargetView: targetView) {
-target = existingTarget
-} else {
-target = GestureTarget()
-targetView.addSubview(target)
-}
-let container = ClosureContainer(closure: closure)
-container.gesture = gesture
-target.containers.append(container)
-
-gesture.addTarget(target, action: #selector(GestureTarget.target(gesture:)))
-targetView.addGestureRecognizer(gesture)
-}
-
-static func existingTarget(inTargetView targetView: UIView) -> GestureTarget? {
-for subview in targetView.subviews {
-if let target = subview as? GestureTarget {
-return target
-}
-}
-return nil
-}
-
-func cleanUpContainers() {
-containers = containers.filter({ $0.gesture != nil })
-}
-
-@objc func target(gesture: UIGestureRecognizer) {
-cleanUpContainers()
-
-for container in containers {
-guard let containerGesture = container.gesture else {
-continue
-}
-
-if gesture === containerGesture {
-container.closure()
-}
-}
-}
-}
+extension Dictionary where Iterator.Element == (key: String, value: Any) { mutating func extend(_ ext : [String:Any]) -> Dictionary<String,Any> { self.merge(ext) { (_, new) in new }; return self; } }
+class RawResource : NSObject {typealias Style = [String:Any]; }; @objcMembers class Resource : NSObject { typealias Style = [String:Any]; override init() {}}
