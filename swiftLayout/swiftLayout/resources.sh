@@ -204,6 +204,7 @@ echo "" >> $R
 for case in $contents; do
 echo "        case "$case >> $R
 done
+echo "            case selected(AnyObject)" >> $R
 if [ -z "$contents" ]
 then
 echo "        case none" >> $R
@@ -216,6 +217,7 @@ for case in $contents; do
 plainCase=$(echo $case | sed 's/\(.*\)(.*)/\1/')
 echo "            case "$plainCase >> $R
 done
+echo "            case selected" >> $R
 if [ -z "$contents" ]
 then
 echo "            case none" >> $R
@@ -229,6 +231,7 @@ for case in $contents; do
 plainCase=$(echo $case | sed 's/\(.*\)(.*)/\1/')
 echo "                case ."$plainCase": return R.event.plain."$plainCase >> $R
 done
+echo "                case .selected: return R.event.plain.selected" >> $R
 if [ -z "$contents" ]
 then
 echo "                case .none : return R.event.plain.none" >> $R
@@ -275,10 +278,10 @@ echo "}" >> $R
 echo "}" >> $tmpfile
 
 echo $(cat $tmpfile) >> $R
-#echo "extension Dictionary where Iterator.Element == (key: String, value: Any) { mutating func extend(_ ext : [String:Any]) -> Dictionary<String,Any> { self.merge(ext) { (_, new) in new }; return self; } }" >> $R
-#echo "class RawResource : NSObject {typealias Style = [String:Any]; }; @objcMembers class Resource : NSObject { typealias Style = [String:Any]; override init() {}}" >> $R
+echo "extension Dictionary where Iterator.Element == (key: String, value: Any) { mutating func extend(_ ext : [String:Any]) -> Dictionary<String,Any> { self.merge(ext) { (_, new) in new }; return self; } }" >> $R
+echo "class RawResource : NSObject {typealias Style = [String:Any]; }; @objcMembers class Resource : NSObject { typealias Style = [String:Any]; override init() {}}" >> $R
 
-#cat $(find ${PWD} -name "swifty_layout_extensions" | head -n 1) >> $R
+cat $(find ${PWD} -name "swifty_layout_extensions" | head -n 1) >> $R
 fi
 
 
