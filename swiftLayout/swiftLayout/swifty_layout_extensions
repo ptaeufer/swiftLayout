@@ -41,7 +41,7 @@ extension UIView : Configuration {
         return self
     }
     
-    func on(click : R.event) {
+    func on(click : R.event) -> Self {
         UITapGestureRecognizer(addToView: self, closure: {
             var parentResponder: UIResponder? = self.superview
             while parentResponder != nil {
@@ -52,6 +52,7 @@ extension UIView : Configuration {
                 }
             }
         })
+        return self
     }
     
     @discardableResult
@@ -62,7 +63,7 @@ extension UIView : Configuration {
             if let v = _val as? R.color { _val = v.color}
             if let v = _val as? R.string { _val = v.string}
             if let v = _val as? R.image { _val = v.image}
-            self.setValue(val, forKey: key)
+            self.setValue(_val, forKey: key)
         }
         return self
     }

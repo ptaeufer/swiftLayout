@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh+
 
 init_res() {
 res=$(dirname -- "$R")
